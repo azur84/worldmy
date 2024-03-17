@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "axios": "^1.6.8",
+    "discord.js": "^14.13.0",
+    "dotenv": "^16.3.1"
+  },
+  "name": "worldmy",
+  "description": "a element empire simulation discord bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "deploy": "node deploy-commands.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/azur84/worldmy.git"
+  },
+  "author": "azur84",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/azur84/worldmy/issues"
+  },
+  "homepage": "https://github.com/azur84/worldmy#readme"
+}

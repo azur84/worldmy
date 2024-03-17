@@ -1,0 +1,175 @@
+{
+    "commands": {
+        "config": {
+            "name": {},
+            "description": {
+                "fr": "configure le bot"
+            },
+            "menu": {
+                "name": {},
+                "description": {
+                    "fr": "menu des réglages"
+                }
+            },
+            "exploration": {
+                "name": {},
+                "description": {},
+                "panel": {
+                    "name": {},
+                    "description": {},
+                    "reply": {}
+                },
+                "add": {
+                    "name": {},
+                    "description": {},
+                    "idopt": {
+                        "name": {},
+                        "description": {}
+                    },
+                    "nameopt": {
+                        "name": {},
+                        "description": {}
+                    },
+                    "iconopt": {
+                        "name": {},
+                        "description": {}
+                    }
+                }
+            },
+            "general": {
+                "name": {
+                    "fr": "général"
+                },
+                "description": {
+                    "fr": "réglages généraux"
+                },
+                "group": {
+                    "name": {
+                        "fr": "groupe"
+                    },
+                    "description": {
+                        "fr": "definir le groupe de salon du bot"
+                    },
+                    "channel": {
+                        "name": {
+                            "fr": "groupe"
+                        },
+                        "description": {
+                            "fr": "le nouveau groupe de salon pour le bot"
+                        }
+                    }
+                }
+            },
+            "item": {
+                "name": {
+                    "fr": "object"
+                },
+                "description": {
+                    "fr": "gestionnaire d'object"
+                },
+                "add": {
+                    "name": {
+                        "fr": "crée"
+                    },
+                    "description": {
+                        "fr": "crée un object"
+                    },
+                    "idopt": {
+                        "name": {},
+                        "description": {}
+                    },
+                    "nameopt": {
+                        "name": {},
+                        "description": {}
+                    },
+                    "iconopt": {
+                        "name": {},
+                        "description": {}
+                    }
+                },
+                "remove": {
+                    "name": {},
+                    "description": {},
+                    "id": {
+                        "name": {},
+                        "description": {}
+                    }
+                },
+                "edit": {
+                    "name": {},
+                    "description": {},
+                    "id": {
+                        "name": {},
+                        "description": {}
+                    },
+                    "mod": {
+                        "name": {},
+                        "description": {},
+                        "choices": [
+                            {},
+                            {},
+                            {}
+                        ]
+                    },
+                    "value": {
+                        "name": {},
+                        "description": {}
+                    }
+                }
+            }
+        },
+        "select": {
+            "name": {},
+            "description": {},
+            "item": {
+                "name": {},
+                "description": {},
+                "itemopt": {
+                    "name": {},
+                    "description": {}
+                },
+                "numberopt": {
+                    "name": {},
+                    "description": {}
+                }
+            },
+            "file": {
+                "name": {},
+                "description": {},
+                "fileopt": {
+                    "name": {},
+                    "description": {}
+                }
+            }
+        }
+    },
+    "buttons": {
+        "cancel_exploration": {
+            "label": {
+                "en": "cancel"
+            }
+        },
+        "addexplorationitem": {
+            "label": {
+                "en": "Add item"
+            },
+            "reply": {
+                "title": {
+                    "en": "Add item"
+                },
+                "description": {
+                    "en": "select item"
+                }
+            }
+        }
+    },
+    "selectmenus": {
+        "selectplace": {
+            "reply": {
+                "name": {
+                    "en": "exploration"
+                }
+            }
+        }
+    }
+}
