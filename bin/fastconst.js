@@ -1,9 +1,10 @@
 const { EmbedBuilder } = require("discord.js")
+const local = require("../local.json").other
 
-function embedError(error) {
+function embedError(error, userlocal) {
     return new EmbedBuilder()
         .setColor(0xcc0000)
-        .setTitle("❌ error")
+        .setTitle(`❌ ${local.error[userlocal] || "error"}`)
         .setDescription(error)
 }
 async function timeMessage(interaction, me) {

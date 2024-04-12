@@ -46,8 +46,8 @@ module.exports = {
                 if (!interaction.client.select.get(interaction.user.id)) {
                     interaction.reply({ embeds: [embedError("missing bot interaction")], ephemeral: true })
                 } else {
-                    interaction.client.select.get(interaction.user.id)?.(id, number)
-                    const item = Item.getItemById(interaction.guildId, id)
+                    interaction.client.select.get(interaction.user.id)?.("item", id, number)
+                    const item = await Item.getItemById(interaction.guildId, id)
                     interaction.reply({ embeds: [embedFastMessage(`${number} ${item.icon}${item.name}`)], ephemeral: true })
                 }
                 break;
@@ -59,12 +59,12 @@ module.exports = {
                     interaction.reply({ embeds: [embedError("bad file format")], ephemeral: true })
                     return
                 }
-                if (interaction.client.select.get(interaction.user.id)) {
+                if (!interaction.client.select.get(interaction.user.id)) {
                     interaction.reply({ embeds: [embedError("missing bot interaction")], ephemeral: true })
                 } else {
                     interaction.reply({ embeds: [embedFastMessage(`file : ${file.name}`)], ephemeral: true })
                     const { data } = await axios.get(file.url)
-                    interaction.client.select.get(interaction.user.id)?.(id, number)
+                    interaction.client.select.get(interaction.user.id)?.("file", file.name, data)
                 }
                 break
             default:
@@ -75,7 +75,7 @@ module.exports = {
         switch (interaction.options.getFocused(true).name) {
             case "itemid":
                 const focusedValue = interaction.options.getFocused();
-                const items = Item.getGuildsItems(interaction.guildId)
+                const items = await Item.getGuildsItems(interaction.guildId)
                 const filter = items.filter(choice => {
                     if (choice.id.includes(focusedValue)) {
                         return true

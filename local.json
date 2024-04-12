@@ -107,7 +107,6 @@
                         "description": {},
                         "choices": [
                             {},
-                            {},
                             {}
                         ]
                     },
@@ -141,6 +140,48 @@
                     "description": {}
                 }
             }
+        },
+        "exploration": {
+            "name": {},
+            "description": {},
+            "start": {
+                "name": {},
+                "description": {},
+                "reply": {}
+            }
+        },
+        "building": {
+            "name": {},
+            "description": {},
+            "build": {
+                "name": {},
+                "description": {},
+                "buildingopt": {
+                    "name": {},
+                    "description": {}
+                }
+            },
+            "area": {
+                "name": {},
+                "description": {},
+                "create": {
+                    "name": {},
+                    "description": {},
+                    "type": {
+                        "name": {},
+                        "description": {},
+                        "choices": [
+                            {},
+                            {},
+                            {}
+                        ]
+                    },
+                    "number": {
+                        "name": {},
+                        "description": {}
+                    }
+                }
+            }
         }
     },
     "buttons": {
@@ -151,7 +192,7 @@
         },
         "addexplorationitem": {
             "label": {
-                "en": "Add item"
+                "en": "Add item json"
             },
             "reply": {
                 "title": {
@@ -171,5 +212,12 @@
                 }
             }
         }
+    },
+    "other": {
+        "error": {},
+        "timeout": {},
+        "for": {},
+        "disabled": {},
+        "ownermessage": {}
     }
 }

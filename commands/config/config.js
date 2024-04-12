@@ -124,19 +124,14 @@ module.exports = {
                     .setRequired(true)
                     .setChoices(
                         {
-                            name: "🪪 id",
-                            value: "id",
-                            name_localizations: local.item.edit.mod.choices[0]
-                        },
-                        {
                             name: "🎯 name",
                             value: "name",
-                            name_localizations: local.item.edit.mod.choices[1]
+                            name_localizations: local.item.edit.mod.choices[0]
                         },
                         {
                             name: "🖼️ icon",
                             value: "icon",
-                            name_localizations: local.item.edit.mod.choices[2]
+                            name_localizations: local.item.edit.mod.choices[1]
                         }
                     )
                 )
@@ -155,7 +150,10 @@ module.exports = {
                         const name = interaction.options.getString("name") || id
                         const icon = interaction.options.getString("icon") || "📦"
                         try {
-                            new Item(interaction.guildId, id, name, icon)
+                            new Item.Builder(interaction.guildId, id)
+                                .setIcon(icon)
+                                .setName(name)
+                                .create()
                             const embed = new EmbedBuilder()
                                 .setColor(0x00B300)
                                 .setTitle(local.item.name[interaction.locale] || "item")
@@ -186,7 +184,7 @@ module.exports = {
                             const id = interaction.options.getString("itemid")
                             const mod = interaction.options.getString('modification')
                             const value = interaction.options.getString('value')
-                            const item = Item.getItemById(interaction.guildId, id)
+                            const item = await Item.getItemById(interaction.guildId, id)
                             item[mod] = value
                             item.save()
                             const embed = new EmbedBuilder()
@@ -201,7 +199,7 @@ module.exports = {
                     case "remove":
                         try {
                             const id = interaction.options.getString("itemid")
-                            Item.delete(interaction.guildId, id)
+                            await Item.delete(interaction.guildId, id)
                             const embed = new EmbedBuilder()
                                 .setColor(0x00B300)
                                 .setTitle(local.item.name[interaction.locale] || "item")
@@ -218,7 +216,7 @@ module.exports = {
             case "exploration":
                 switch (interaction.options.getSubcommand()) {
                     case "menu":
-                        const menu = interaction.client.selectmenus.get("selectplace").data(interaction)
+                        const menu = await interaction.client.selectmenus.get("selectplace").data(interaction, interaction.user.id)
                         const row = new ActionRowBuilder()
                             .addComponents(menu)
                         const embed = new EmbedBuilder()
@@ -233,7 +231,10 @@ module.exports = {
                         const iconstring = interaction.options.getString("icon")
                         const icon = iconstring
                         try {
-                            new Place(interaction.guildId, id, name, icon)
+                            new Place.Builder(interaction.guildId, id)
+                                .setIcon(icon)
+                                .setName(name)
+                                .create()
                             const embed = new EmbedBuilder()
                                 .setColor(0x00B300)
                                 .setTitle(local.exploration.name[interaction.locale] || "exploration")
@@ -280,7 +281,7 @@ module.exports = {
         switch (interaction.options.getFocused(true).name) {
             case "itemid":
                 const focusedValue = interaction.options.getFocused();
-                const items = Item.getGuildsItems(interaction.guildId)
+                const items = await Item.getGuildsItems(interaction.guildId)
                 const filter = items.filter(choice => {
                     if (choice.id.includes(focusedValue)) {
                         return true

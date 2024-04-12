@@ -81,11 +81,11 @@
                     "mod": {
                         "name": "modification",
                         "description": "item's property to modify",
-                        "choices": [
-                            "🪪 id",
-                            "🎯 name",
-                            "🖼️ icon"
-                        ]
+                        "choices": {
+                            "0": "🪪 id",
+                            "1": "🎯 name",
+                            "2": "🖼️ icon"
+                        }
                     },
                     "value": {
                         "name": "",
@@ -109,6 +109,10 @@
                     "description": "number of selected item"
                 }
             }
+        },
+        "exploration": {
+            "name": {},
+            "description": {}
         }
     },
     "buttons": {

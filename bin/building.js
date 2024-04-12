@@ -1,6 +1,6 @@
 const { writeData, getDataList, getData, deleteData } = require('./data');
 
-class PlaceBuilder {
+class BuildingBuilder {
     constructor(guildid, id) {
         this.data.guildid = guildid
         this.data.id = id
@@ -22,22 +22,21 @@ class PlaceBuilder {
     }
 
     create() {
-        const item = Place.createWithData(this.data)
+        const item = Building.createWithData(this.data)
         item.save()
         return item
     }
 }
 
-class Place {
-    itemstable = {}
+class Building {
     guildid = ""
     id = ""
     name = ""
     icon = ""
-    static Builder = PlaceBuilder
+    static Builder = BuildingBuilder
 
     async save() {
-        await writeData(this.guildid, "places", this.id, this)
+        await writeData(this.guildid, "buildings", this.id, this)
     }
 
     toString() {
@@ -46,35 +45,34 @@ class Place {
             id: this.id,
             name: this.name,
             icon: this.icon,
-            itemstable: this.itemstable,
         }
     }
 
-    static async getGuildsPlaces(guildid) {
-        const itemsfiles = await getDataList(guildid, "places")
+    static async getGuildsBuildings(guildid) {
+        const itemsfiles = await getDataList(guildid, "buildings")
         let items = []
         itemsfiles.forEach((e) => {
-            items.push(Place.createWithData(e))
+            items.push(Building.createWithData(e))
         })
         return items
     }
-    static async getPlaceById(guildid, id) {
-        const item = Place.createWithData(await getData(guildid, "places", id))
+    static async getBuildingById(guildid, id) {
+        const item = Building.createWithData(await getData(guildid, "buildings", id))
         return item
     }
     static createWithData(data) {
-        const place = new Place()
-        place.id = data.id
-        place.icon = data.icon
-        place.name = data.name
-        place.guildid = data.guildid
-        return place
+        const Building = new Building()
+        Building.id = data.id
+        Building.icon = data.icon
+        Building.name = data.name
+        Building.guildid = data.guildid
+        return Building
     }
     static async delete(guildid, id) {
-        await deleteData(guildid, "places", id)
+        await deleteData(guildid, "buildings", id)
     }
 }
 
 module.exports = {
-    Place
+    Building
 }

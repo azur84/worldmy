@@ -1,26 +1,42 @@
-const { readdirSync, existsSync, writeFileSync, rmSync, mkdirSync, } = require('fs')
-const path = require('path')
-const { } = require("../bin.js")
+const { writeData, getDataList, getData, deleteData } = require('./data')
+
+class ItemBuilder {
+    constructor(guildid,id) {
+        this.data.guildid = guildid
+        this.data.id = id
+    }
+    data = {
+        name: "",
+        id: "",
+        icon: "",
+        guildid: ""
+    }
+
+    setIcon(icon) {
+        this.data.icon = icon
+        return this
+    }
+    setName(name) {
+        this.data.name = name
+        return this
+    }
+
+    create() {
+        const item = Item.createWithData(this.data)
+        item.save()
+        return item
+    }
+}
 
 class Item {
-    constructor(guildid, id, name, icon, get = false) {
-        this.guildid = guildid
-        this.id = id
-        this.name = name
-        this.icon = icon
-        if (!existsSync(path.join(process.env.basepath, "serveurs", this.guildid, "items"))) {
-            mkdirSync(path.join(process.env.basepath, "serveurs", this.guildid, "items"), { recursive: true })
-        }
-        if (get) {
-            return
-        }
-        if (existsSync(path.join(process.env.basepath, "serveurs", this.guildid, "items", `${this.id}.json`))) {
-            throw new Error("Already created !")
-        }
-        writeFileSync(path.join(process.env.basepath, "serveurs", this.guildid, "items", `${this.id}.json`), JSON.stringify(this))
-    }
-    save() {
-        writeFileSync(path.join(process.env.basepath, "serveurs", this.guildid, "items", `${this.id}.json`), JSON.stringify(this))
+    guildid = ""
+    id = ""
+    name = ""
+    icon = ""
+    static Builder = ItemBuilder
+
+    async save() {
+        await writeData(this.guildid, "items", this.id, this)
     }
 
     toString() {
@@ -32,29 +48,28 @@ class Item {
         }
     }
 
-    static getGuildsItems(guildid) {
-        if (!existsSync(path.join(process.env.basepath, "serveurs", guildid, "items"))) {
-            mkdirSync(path.join(process.env.basepath, "serveurs", guildid, "items"), { recursive: true })
-        }
-        const itemsfiles = readdirSync(path.join(process.env.basepath, "serveurs", guildid, "items"), { withFileTypes: true })
+    static async getGuildsItems(guildid) {
+        const itemsfiles = await getDataList(guildid, "items")
         let items = []
         itemsfiles.forEach((e) => {
-            items.push(Item.createWithFiles(require(path.join(e.path, e.name))))
+            items.push(Item.createWithData(e))
         })
         return items
     }
-    static getItemById(guildid, id) {
-        const item = Item.createWithFiles(require(path.join(process.env.basepath, "serveurs", guildid, "items", `${id}.json`)))
+    static async getItemById(guildid, id) {
+        const item = await getData(guildid, "items", id)
         return item
     }
-    static createWithFiles(file) {
-        return new Item(file.guildid, file.id, file.name, file.icon, true)
+    static createWithData(data) {
+        const item = new Item()
+        item.guildid = data.guildid
+        item.icon = data.icon
+        item.id = data.id
+        item.name = data.name
+        return item
     }
-    static delete(guildid, id) {
-        if (!existsSync(path.join(process.env.basepath, "serveurs", guildid, "items", `${id}.json`))) {
-            throw new Error("Don't exist !")
-        }
-        rmSync(path.join(process.env.basepath, "serveurs", guildid, "items", `${id}.json`))
+    static async delete(guildid, id) {
+        await deleteData(guildid, "items", id)
     }
 }
 
