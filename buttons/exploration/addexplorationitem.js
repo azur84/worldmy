@@ -2,8 +2,7 @@ const { ButtonBuilder, ButtonInteraction, ButtonStyle, EmbedBuilder, ActionRowBu
 const { timeMessage, select, embedError } = require("../../bin/fastconst");
 const { Place } = require("../../bin/exploration");
 const { timer, paramCustomId } = require("../../bin/utility");
-const local = require("../../local.json").buttons.addexplorationitem
-const otherlocal = require("../../local.json").other
+const { getTranslation } = require("../../bin/translation");
 
 module.exports = {
     id: "addexplorationitem",
@@ -11,11 +10,11 @@ module.exports = {
         .setCustomId(`addexplorationitem@placeId=${placeId}&userid=${userid}`)
         .setStyle(ButtonStyle.Primary)
         .setEmoji("➕")
-        .setLabel(local.label[interaction.locale] || local.label.en),
+        .setLabel(getTranslation("add_item", interaction.locale)),
     async execute(interaction = ButtonInteraction.prototype) {
         const parm = paramCustomId(interaction.customId)
         if (parm.userid != interaction.user.id) {
-            interaction.reply({ ephemeral: true, embeds: [embedError(otherlocal.ownermessage[interaction.locale] || "You are not my owner.", interaction.locale)] })
+            interaction.reply({ ephemeral: true, embeds: [embedError(getTranslation("owner_error", interaction.locale), interaction.locale)] })
             return
         }
         interaction.client.select.set(interaction.user.id, async (type, filename, file) => {
@@ -35,8 +34,8 @@ module.exports = {
         }, 60000)
         const embed = new EmbedBuilder()
             .setColor(0x2ACAEA)
-            .setTitle(local.reply.title[interaction.locale] || local.reply.title.en)
-            .setDescription(local.reply.description[interaction.locale] || local.reply.description.en)
+            .setTitle(getTranslation("add_item", interaction.locale))
+            .setDescription(getTranslation("select_item", interaction.locale))
             .addFields([{ name: "timeout", value: timer(60) }, { name: "command", value: "</select file:1216458571299033208>" }])
         const load = await timeMessage(interaction, "loading")
         await interaction.message.edit({ components: [], embeds: [embed] })

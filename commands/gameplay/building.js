@@ -3,66 +3,64 @@ const { timeout, deleteData } = require("../../bin/data");
 const { Place } = require("../../bin/exploration");
 const { embedError } = require("../../bin/fastconst");
 const { Building } = require("../../bin/building");
-const { getTranslation, getMainTranslation } = require("../../bin/translation");
-const local = require("../../local.json").commands.building
-const otherlocal = require("../../local.json").other
+const { getTranslation, getMainTranslation, getAllTranslation } = require("../../bin/translation");
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName(getMainTranslation("commands.building.name"))
-        .setNameLocalizations(getMainTranslation("commands.building.name"))
-        .setDescription(getMainTranslation("commands.building.description"))
-        .setDescriptionLocalizations(local.description)
+        .setName(getMainTranslation("building"))
+        .setNameLocalizations(getAllTranslation("building"))
+        .setDescription(getMainTranslation("building_commands"))
+        .setDescriptionLocalizations(getAllTranslation("building_commands"))
         .addSubcommandGroup(g => g
-            .setName("area")
-            .setNameLocalizations(local.area.name)
-            .setDescription("area command")
-            .setDescriptionLocalizations(local.area.description)
+            .setName(getMainTranslation("area"))
+            .setNameLocalizations(getAllTranslation("area"))
+            .setDescription(getMainTranslation("area_commands"))
+            .setDescriptionLocalizations(getAllTranslation("area_commands"))
             .addSubcommand(c => c
-                .setName("create")
-                .setNameLocalizations(local.area.create.name)
-                .setDescription("create an area")
-                .setDescriptionLocalizations(local.area.create.description)
+                .setName(getMainTranslation("create"))
+                .setNameLocalizations(getAllTranslation("create"))
+                .setDescription(getMainTranslation("create_area"))
+                .setDescriptionLocalizations(getAllTranslation("create_area"))
                 .addStringOption(o => o
-                    .setName("type")
-                    .setNameLocalizations(local.area.create.type.name)
-                    .setDescription("type of area")
-                    .setDescriptionLocalizations(local.area.create.type.description)
+                    .setName(getMainTranslation("type"))
+                    .setNameLocalizations(getAllTranslation("type"))
+                    .setDescription(getMainTranslation("type_area"))
+                    .setDescriptionLocalizations(getAllTranslation("type_area"))
                     .setRequired(true)
                     .setChoices(
                         {
-                            name: "👨‍👩‍👧‍👦 residential area",
+                            name: getMainTranslation("residential_area"),
                             value: "residential",
-                            name_localizations: local.area.create.type.choices[0]
+                            name_localizations: getAllTranslation("residential_area")
                         },
                         {
-                            name: "👷 industrial area",
-                            value: "industrial",
-                            name_localizations: local.area.create.type.choices[1]
+                            name: getMainTranslation("productive_area"),
+                            value: "productive",
+                            name_localizations: getAllTranslation("productive_area")
                         },
                         {
-                            name: "🧑‍💼 tertiary area",
+                            name: getMainTranslation("tertiary_area"),
                             value: "tertiary",
-                            name_localizations: local.area.create.type.choices[2]
+                            name_localizations: getAllTranslation("tertiary_area")
                         }
                     )
                 )
                 .addIntegerOption(o => o
-                    .setName("number")
-                    .setNameLocalizations(local.area.create.number.name)
-                    .setDescription("number of area")
-                    .setDescriptionLocalizations(local.area.create.number.description)
+                    .setName(getMainTranslation("number"))
+                    .setNameLocalizations(getAllTranslation("number"))
+                    .setDescription(getMainTranslation("number_area"))
+                    .setDescriptionLocalizations(getAllTranslation("number_area"))
                     .setMinValue(1))))
         .addSubcommand(c => c
-            .setName("build")
-            .setDescriptionLocalizations(local.build.name)
-            .setDescription("build a building")
-            .setDescriptionLocalizations(local.build.description)
+            .setName(getMainTranslation("build"))
+            .setDescriptionLocalizations(getAllTranslation("build"))
+            .setDescription(getMainTranslation("build_building"))
+            .setDescriptionLocalizations(getAllTranslation("build_building"))
             .addStringOption(o => o
-                .setName("building")
-                .setNameLocalizations(local.build.buildingopt.name)
-                .setDescription("building to build")
-                .setDescriptionLocalizations(local.build.buildingopt.description)
+                .setName(getMainTranslation("building"))
+                .setNameLocalizations(getAllTranslation("building"))
+                .setDescription(getMainTranslation("building_to_build"))
+                .setDescriptionLocalizations(getAllTranslation("building_to_build"))
                 .setAutocomplete(true)
                 .setRequired(true))),
     async execute(interaction = CommandInteraction.prototype) {

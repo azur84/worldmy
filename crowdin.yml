@@ -1,6 +1,12 @@
 "files": [
   {
-    "source": "",
-    "translation": ""
+    "source": "/locales/en_main.json",
+    "translation": "/locales/%two_letters_code%.json",
+    "translation_replace": {
+      "pt": "pt-BR",
+      "es": "es-ES",
+      "sv": "sv-SE",
+      "zh": "zh-CN"
+    }
   }
 ]

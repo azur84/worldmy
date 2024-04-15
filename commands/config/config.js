@@ -2,144 +2,143 @@ const { SlashCommandBuilder, ChannelType, CommandInteraction, AutocompleteIntera
 const { Item } = require("../../bin/item");
 const { embedError } = require("../../bin/fastconst");
 const { Place } = require("../../bin/exploration");
-const local = require("../../local.json").commands.config
-const emojis = require("../../emojis.json")
+const { getMainTranslation, getAllTranslation, getTranslation } = require("../../bin/translation");
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName("config")
-        .setNameLocalizations(local.name)
-        .setDescription("configure the bot")
-        .setDescriptionLocalizations(local.description)
+        .setName(getMainTranslation("config"))
+        .setNameLocalizations(getAllTranslation("config"))
+        .setDescription(getMainTranslation("config_description"))
+        .setDescriptionLocalizations(getAllTranslation("config_description"))
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .setDMPermission(false)
         .addSubcommand(C => C
-            .setName("menu")
-            .setNameLocalizations(local.menu.name)
-            .setDescription("settings menu")
-            .setDescriptionLocalizations(local.menu.description))
+            .setName(getMainTranslation("menu"))
+            .setNameLocalizations(getAllTranslation("menu"))
+            .setDescription(getMainTranslation("menu_description"))
+            .setDescriptionLocalizations(getAllTranslation("menu_description")))
         .addSubcommandGroup(C => C
-            .setName("exploration")
-            .setNameLocalizations(local.exploration.name)
-            .setDescription("setup /exploration")
-            .setDescriptionLocalizations(local.exploration.description)
+            .setName(getMainTranslation("exploration"))
+            .setNameLocalizations(getAllTranslation("exploration"))
+            .setDescription(getMainTranslation("exploration_description"))
+            .setDescriptionLocalizations(getAllTranslation("exploration_description"))
             .addSubcommand(C => C
-                .setName("menu")
-                .setNameLocalizations(local.exploration.panel.name)
-                .setDescription("open exploration config menu")
-                .setDescriptionLocalizations(local.exploration.panel.description))
+                .setName(getMainTranslation("menu"))
+                .setNameLocalizations(getAllTranslation("menu"))
+                .setDescription(getMainTranslation("exploration_menu_description"))
+                .setDescriptionLocalizations(getAllTranslation("exploration_menu_description")))
             .addSubcommand(C => C
-                .setName("add-place")
-                .setNameLocalizations(local.exploration.add.name)
-                .setDescription("add exploration place")
-                .setDescriptionLocalizations(local.exploration.add.description)
+                .setName(getMainTranslation("add-place"))
+                .setNameLocalizations(getAllTranslation("add-place"))
+                .setDescription(getMainTranslation("add-place_description"))
+                .setDescriptionLocalizations(getAllTranslation("add-place_description"))
                 .addStringOption(C => C
-                    .setName("id")
-                    .setNameLocalizations(local.exploration.add.idopt.name)
-                    .setDescription("place's id")
-                    .setDescriptionLocalizations(local.exploration.add.idopt.description)
+                    .setName(getMainTranslation("id"))
+                    .setNameLocalizations(getAllTranslation("id"))
+                    .setDescription(getMainTranslation("opt_place.id"))
+                    .setDescriptionLocalizations(getAllTranslation("opt_place.id"))
                     .setRequired(true))
                 .addStringOption(C => C
-                    .setName("name")
-                    .setNameLocalizations(local.exploration.add.nameopt.name)
-                    .setDescription("place's name")
-                    .setDescriptionLocalizations(local.exploration.add.nameopt.description))
+                    .setName(getMainTranslation("name"))
+                    .setNameLocalizations(getAllTranslation("name"))
+                    .setDescription(getMainTranslation("opt_place.name"))
+                    .setDescriptionLocalizations(getAllTranslation("opt_place.name")))
                 .addStringOption(C => C
-                    .setName("icon")
-                    .setNameLocalizations(local.exploration.add.iconopt.name)
-                    .setDescription("place's icon")
-                    .setDescriptionLocalizations(local.exploration.add.iconopt.description))))
+                    .setName(getMainTranslation("icon"))
+                    .setNameLocalizations(getAllTranslation("icon"))
+                    .setDescription(getMainTranslation("opt_place.icon"))
+                    .setDescriptionLocalizations(getAllTranslation("opt_place.icon")))))
         .addSubcommandGroup(C => C
-            .setName("general")
-            .setNameLocalizations(local.general.name)
-            .setDescription("general settings")
-            .setDescriptionLocalizations(local.general.description)
+            .setName(getMainTranslation("general"))
+            .setNameLocalizations(getAllTranslation("general"))
+            .setDescription(getMainTranslation("general_description"))
+            .setDescriptionLocalizations(getAllTranslation("general_description"))
             .addSubcommand(C => C
-                .setName("group")
-                .setNameLocalizations(local.general.group.name)
-                .setDescription("define the bot channel group")
-                .setDescriptionLocalizations(local.general.group.description)
+                .setName(getMainTranslation("group"))
+                .setNameLocalizations(getAllTranslation("group"))
+                .setDescription(getMainTranslation("group_channel_description"))
+                .setDescriptionLocalizations(getMainTranslation("group_channel_description"))
                 .addChannelOption(C => C
-                    .setName("channelgroup")
-                    .setNameLocalizations(local.general.group.channel.name)
-                    .setDescription("the new bot channel group")
-                    .setDescriptionLocalizations(local.general.group.channel.description)
+                    .setName(getMainTranslation("channel-group"))
+                    .setNameLocalizations(getAllTranslation("channel-group"))
+                    .setDescription(getMainTranslation("channel-group_description"))
+                    .setDescriptionLocalizations(getAllTranslation("channel-group_description"))
                     .addChannelTypes(ChannelType.GuildCategory)
                     .setRequired(true))))
         .addSubcommandGroup(C => C
-            .setName("item")
-            .setNameLocalizations(local.item.name)
-            .setDescription("item manager")
-            .setDescriptionLocalizations(local.item.name)
+            .setName(getMainTranslation("item"))
+            .setNameLocalizations(getAllTranslation("item"))
+            .setDescription(getMainTranslation("item_manager"))
+            .setDescriptionLocalizations(getAllTranslation("item_manager"))
             .addSubcommand(C => C
-                .setName("add")
-                .setNameLocalizations(local.item.add.name)
-                .setDescription("create an item")
-                .setDescriptionLocalizations(local.item.add.description)
+                .setName(getMainTranslation("add"))
+                .setNameLocalizations(getAllTranslation("add"))
+                .setDescription(getMainTranslation("create_item"))
+                .setDescriptionLocalizations(getAllTranslation("create_item"))
                 .addStringOption(C => C
-                    .setName("id")
-                    .setNameLocalizations(local.item.add.idopt.name)
-                    .setDescription("item's id")
-                    .setDescriptionLocalizations(local.item.add.idopt.description)
+                    .setName(getMainTranslation("id"))
+                    .setNameLocalizations(getAllTranslation("id"))
+                    .setDescription(getMainTranslation("opt_item.id"))
+                    .setDescriptionLocalizations(getAllTranslation("opt_item.id"))
                     .setRequired(true))
                 .addStringOption(C => C
-                    .setName("name")
-                    .setNameLocalizations(local.item.add.nameopt.name)
-                    .setDescription("item's name")
-                    .setDescriptionLocalizations(local.item.add.nameopt.description))
+                    .setName(getMainTranslation("name"))
+                    .setNameLocalizations(getAllTranslation("name"))
+                    .setDescription(getMainTranslation("opt_item.name"))
+                    .setDescriptionLocalizations(getAllTranslation("opt_item.name")))
                 .addStringOption(C => C
-                    .setName("icon")
-                    .setNameLocalizations(local.item.add.iconopt.name)
-                    .setDescription("item's icon")
-                    .setDescriptionLocalizations(local.item.add.iconopt.description)))
+                    .setName(getMainTranslation("icon"))
+                    .setNameLocalizations(getAllTranslation("icon"))
+                    .setDescription(getMainTranslation("opt_item.icon"))
+                    .setDescriptionLocalizations(getAllTranslation("opt_item.icon"))))
             .addSubcommand(C => C
-                .setName("remove")
-                .setNameLocalizations(local.item.remove.name)
-                .setDescription("remove an item")
-                .setNameLocalizations(local.item.remove.description)
+                .setName(getMainTranslation("remove"))
+                .setNameLocalizations(getMainTranslation("remove"))
+                .setDescription(getMainTranslation("remove_item"))
+                .setNameLocalizations(getAllTranslation("remove_item"))
                 .addStringOption(C => C
-                    .setName("itemid")
-                    .setNameLocalizations(local.item.remove.id.name)
-                    .setDescription("the item's id")
-                    .setDescriptionLocalizations(local.item.remove.id.description)
+                    .setName(getMainTranslation("item_id"))
+                    .setNameLocalizations(getAllTranslation("item_id"))
+                    .setDescription(getMainTranslation("opt_item.id"))
+                    .setDescriptionLocalizations(getAllTranslation("opt_item.id"))
                     .setAutocomplete(true)
                     .setRequired(true)))
             .addSubcommand(C => C
-                .setName("edit")
-                .setNameLocalizations(local.item.edit.name)
-                .setDescription("edit an item")
-                .setDescriptionLocalizations(local.item.edit.description)
+                .setName(getMainTranslation("edit"))
+                .setNameLocalizations(getAllTranslation("edit"))
+                .setDescription(getMainTranslation("edit_item"))
+                .setDescriptionLocalizations(getAllTranslation("edit_item"))
                 .addStringOption(C => C
-                    .setName("itemid")
-                    .setNameLocalizations(local.item.edit.id.name)
-                    .setDescription("the item's id")
-                    .setDescriptionLocalizations(local.item.edit.id.description)
+                    .setName(getMainTranslation("item_id"))
+                    .setNameLocalizations(getAllTranslation("item_id"))
+                    .setDescription(getMainTranslation("opt_item.id"))
+                    .setDescriptionLocalizations(getAllTranslation("opt_item.id"))
                     .setAutocomplete(true)
                     .setRequired(true))
                 .addStringOption(C => C
-                    .setName("modification")
-                    .setNameLocalizations(local.item.edit.mod.name)
-                    .setDescription("item's property to modify")
-                    .setDescriptionLocalizations(local.item.edit.mod.description)
+                    .setName(getMainTranslation("modification"))
+                    .setNameLocalizations(getAllTranslation("modification"))
+                    .setDescription(getMainTranslation("item_modification"))
+                    .setDescriptionLocalizations(getAllTranslation("item_modification"))
                     .setRequired(true)
                     .setChoices(
                         {
-                            name: "🎯 name",
+                            name: getMainTranslation("choices.name"),
                             value: "name",
-                            name_localizations: local.item.edit.mod.choices[0]
+                            name_localizations: getAllTranslation("choices.name")
                         },
                         {
-                            name: "🖼️ icon",
+                            name: getMainTranslation("choices.icon"),
                             value: "icon",
-                            name_localizations: local.item.edit.mod.choices[1]
+                            name_localizations: getAllTranslation("choices.icon")
                         }
                     )
                 )
                 .addStringOption(C => C
-                    .setName("value")
-                    .setNameLocalizations(local.item.edit.value.name)
-                    .setDescription("new item value")
-                    .setDescriptionLocalizations(local.item.edit.value.description)
+                    .setName(getMainTranslation("value"))
+                    .setNameLocalizations(getAllTranslation("value"))
+                    .setDescription(getMainTranslation("new_item_value"))
+                    .setDescriptionLocalizations(getAllTranslation("new_item_value"))
                     .setRequired(true)))),
     async execute(interaction = CommandInteraction.prototype) {
         switch (interaction.options.getSubcommandGroup()) {
@@ -156,27 +155,27 @@ module.exports = {
                                 .create()
                             const embed = new EmbedBuilder()
                                 .setColor(0x00B300)
-                                .setTitle(local.item.name[interaction.locale] || "item")
+                                .setTitle(getTranslation("item", interaction.locale))
                                 .addFields(
                                     {
-                                        name: local.item.add.idopt.name[interaction.locale] || "id",
+                                        name: getTranslation("id", interaction.locale),
                                         value: id,
                                         inline: true
                                     },
                                     {
-                                        name: local.item.add.nameopt.name[interaction.locale] || "name",
+                                        name: getTranslation("name", interaction.locale),
                                         value: name,
                                         inline: true
                                     },
                                     {
-                                        name: local.item.add.iconopt.name[interaction.locale] || "icon",
+                                        name: getTranslation("icon", interaction.locale),
                                         value: icon,
                                         inline: true
                                     }
                                 )
                             interaction.reply({ embeds: [embed] })
                         } catch (error) {
-                            interaction.reply({ embeds: [embedError(error.message)], ephemeral: true })
+                            interaction.reply({ embeds: [embedError(error.message, interaction.locale)], ephemeral: true })
                         }
                         break;
                     case "edit":
@@ -189,11 +188,11 @@ module.exports = {
                             item.save()
                             const embed = new EmbedBuilder()
                                 .setColor(0x00B300)
-                                .setTitle(local.item.name[interaction.locale] || "item")
-                                .setDescription(`${local.item.edit.name[interaction.locale] || "edit"} : ${id}`)
+                                .setTitle(getTranslation("item", interaction.locale))
+                                .setDescription(`${getTranslation("edit", interaction.locale)} : ${id}`)
                             interaction.reply({ embeds: [embed] })
                         } catch (error) {
-                            interaction.reply({ embeds: [embedError(error.message)], ephemeral: true })
+                            interaction.reply({ embeds: [embedError(error.message, interaction.locale)], ephemeral: true })
                         }
                         break
                     case "remove":
@@ -202,11 +201,11 @@ module.exports = {
                             await Item.delete(interaction.guildId, id)
                             const embed = new EmbedBuilder()
                                 .setColor(0x00B300)
-                                .setTitle(local.item.name[interaction.locale] || "item")
-                                .setDescription(`${local.item.remove.name[interaction.locale] || "remove"} : ${id}`)
+                                .setTitle(getTranslation("item", interaction.locale))
+                                .setDescription(`${getTranslation("remove", interaction.locale)} : ${id}`)
                             interaction.reply({ embeds: [embed] })
                         } catch (error) {
-                            interaction.reply({ embeds: [embedError(error.message)], ephemeral: true })
+                            interaction.reply({ embeds: [embedError(error.message, interaction.locale)], ephemeral: true })
                         }
                         break
                     default:
@@ -221,8 +220,8 @@ module.exports = {
                             .addComponents(menu)
                         const embed = new EmbedBuilder()
                             .setColor(0x00B300)
-                            .setTitle(local.exploration.name[interaction.locale] || "exploration")
-                            .setDescription(local.exploration.panel.reply[interaction.locale] || "setup exploration places")
+                            .setTitle(getTranslation("exploration", interaction.locale))
+                            .setDescription(getTranslation("setup_exploration", interaction.locale))
                         await interaction.reply({ components: [row], embeds: [embed] })
                         break;
                     case "add-place":
@@ -237,27 +236,27 @@ module.exports = {
                                 .create()
                             const embed = new EmbedBuilder()
                                 .setColor(0x00B300)
-                                .setTitle(local.exploration.name[interaction.locale] || "exploration")
+                                .setTitle(getTranslation("exploration", interaction.locale))
                                 .addFields(
                                     {
-                                        name: local.exploration.add.idopt.name[interaction.locale] || "id",
+                                        name: getTranslation("id", interaction.locale),
                                         value: id,
                                         inline: true
                                     },
                                     {
-                                        name: local.exploration.add.nameopt.name[interaction.locale] || "name",
+                                        name: getTranslation("name", interaction.locale),
                                         value: name,
                                         inline: true
                                     },
                                     {
-                                        name: local.exploration.add.iconopt.name[interaction.locale] || "icon",
+                                        name: getTranslation("icon", interaction.locale),
                                         value: icon,
                                         inline: true
                                     }
                                 )
                             interaction.reply({ embeds: [embed] })
                         } catch (error) {
-                            interaction.reply({ embeds: [embedError(error.message)], ephemeral: true })
+                            interaction.reply({ embeds: [embedError(error.message, interaction.locale)], ephemeral: true })
                         }
                         break
                     default:
@@ -270,7 +269,7 @@ module.exports = {
 
                     //     break;
                     default:
-                        interaction.reply({ embeds: [embedError("Unsuported command")], ephemeral: true })
+                        interaction.reply({ embeds: [embedError("Unsuported command", interaction.locale)], ephemeral: true })
                         break;
                 }
                 break;
@@ -279,7 +278,7 @@ module.exports = {
     },
     async autocomplete(interaction = AutocompleteInteraction.prototype) {
         switch (interaction.options.getFocused(true).name) {
-            case "itemid":
+            case "item_id":
                 const focusedValue = interaction.options.getFocused();
                 const items = await Item.getGuildsItems(interaction.guildId)
                 const filter = items.filter(choice => {

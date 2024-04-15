@@ -132,3 +132,4 @@ dist
 package-lock.json
 .vscode
 serveurs/
+crowdin.yml

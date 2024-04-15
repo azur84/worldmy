@@ -2,20 +2,19 @@ const { SlashCommandBuilder, CommandInteraction, EmbedBuilder, ActionRowBuilder 
 const { timeout, deleteData } = require("../../bin/data");
 const { Place } = require("../../bin/exploration");
 const { embedError } = require("../../bin/fastconst");
-const local = require("../../local.json").commands.exploration
-const otherlocal = require("../../local.json").other
+const { getMainTranslation, getAllTranslation, getTranslation } = require("../../bin/translation");
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName("exploration")
-        .setNameLocalizations(local.name)
-        .setDescription("exploration command")
-        .setDescriptionLocalizations(local.description)
+        .setName(getMainTranslation("exploration"))
+        .setNameLocalizations(getAllTranslation("exploration"))
+        .setDescription(getMainTranslation("exploration_command"))
+        .setDescriptionLocalizations(getAllTranslation("exploration_command"))
         .addSubcommand(c => c
-            .setName("start")
-            .setDescriptionLocalizations(local.start.name)
-            .setDescription("start a exploration")
-            .setDescriptionLocalizations(local.start.description)),
+            .setName(getMainTranslation("start"))
+            .setDescriptionLocalizations(getAllTranslation("start"))
+            .setDescription(getMainTranslation("start_exploration"))
+            .setDescriptionLocalizations(getAllTranslation("start_exploration"))),
     async execute(interaction = CommandInteraction.prototype) {
         switch (interaction.options.getSubcommandGroup()) {
             default:
@@ -25,10 +24,10 @@ module.exports = {
                         if (timeo) {
                             const embed = new EmbedBuilder()
                                 .setColor(0x006699)
-                                .setTitle(local.name[interaction] || "exploration")
+                                .setTitle(getTranslation("exploration", interaction.locale))
                                 .addFields([
                                     {
-                                        name: otherlocal.timeout[interaction.locale] || "time out:",
+                                        name: `${getTranslation("timeout", interaction.locale)} :`,
                                         value: `<t:${timeo}:R>`
                                     }
                                 ])
@@ -37,21 +36,21 @@ module.exports = {
                             const places = await Place.getGuildsPlaces(interaction.guildId)
                             switch (places.length) {
                                 case 0:
-                                    interaction.reply({ ephemeral: true, embeds: [embedError(`${local.name[interaction.locale] || "exploration"} ${otherlocal.disabled[interaction.locale] || "disabled"}`)] })
+                                    interaction.reply({ ephemeral: true, embeds: [embedError(getTranslation("exploration_disabled", interaction.locale))] })
                                     await deleteData(interaction.guildId, "exploration", interaction.user.id, false)
                                     break
                                 case 1:
                                     const embed = new EmbedBuilder()
                                         .setColor(0x00cc66)
-                                        .setTitle(local.name[interaction] || "exploration")
-                                        .setDescription(local.start.reply[interaction] || "exploration success")
+                                        .setTitle(getTranslation("exploration", interaction.locale))
+                                        .setDescription(getTranslation("exploration_success", interaction.locale))
                                     interaction.reply({ ephemeral: true, embeds: [embed] })
                                     break
                                 default:
                                     const embedselect = new EmbedBuilder()
                                         .setColor(0x00cc66)
-                                        .setTitle(local.name[interaction] || "exploration")
-                                        .setDescription(local.start.reply[interaction] || "exploration success")
+                                        .setTitle(getTranslation("exploration", interaction.locale))
+                                        .setDescription(getTranslation("exploration_success", interaction.locale))
                                     const menu = interaction.client.selectmenus.get("selectplace_exploration_start").data(interaction, places, interaction.user.id)
                                     const row = new ActionRowBuilder()
                                         .addComponents(menu)

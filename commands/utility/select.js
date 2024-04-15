@@ -1,42 +1,42 @@
 const { SlashCommandBuilder, ChannelType, CommandInteraction, AutocompleteInteraction, EmbedBuilder, StringSelectMenuBuilder, ActionRowBuilder, guild, PermissionFlagsBits } = require("discord.js");
 const { Item } = require("../../bin/item");
 const { embedError, embedFastMessage } = require("../../bin/fastconst");
-const { default: axios } = require("axios");
-const local = require("../../local.json").commands.select
+const { axios } = require("axios");
+const { getTranslation, getMainTranslation, getAllTranslation } = require("../../bin/translation");
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName("select")
-        .setNameLocalizations(local.name)
-        .setDescription("select")
-        .setDescriptionLocalizations(local.description)
+        .setName(getMainTranslation("select"))
+        .setNameLocalizations(getAllTranslation("select"))
+        .setDescription(getMainTranslation("select"))
+        .setDescriptionLocalizations(getAllTranslation("select"))
         .addSubcommand(c => c
-            .setName("item")
-            .setNameLocalizations(local.item.name)
-            .setDescription("select item")
-            .setDescriptionLocalizations(local.item.description)
+            .setName(getMainTranslation("item"))
+            .setNameLocalizations(getAllTranslation("item"))
+            .setDescription(getMainTranslation("select_item"))
+            .setDescriptionLocalizations(getAllTranslation("select_item"))
             .addStringOption(o => o
-                .setName("itemid")
-                .setNameLocalizations(local.item.itemopt.name)
-                .setDescription("selected item")
-                .setDescriptionLocalizations(local.item.itemopt.description)
+                .setName(getMainTranslation("item_id"))
+                .setNameLocalizations(getAllTranslation("item_id"))
+                .setDescription(getMainTranslation("selected_item"))
+                .setDescriptionLocalizations(getAllTranslation("selected_item"))
                 .setAutocomplete(true)
                 .setRequired(true))
             .addNumberOption(o => o
-                .setName("number")
-                .setNameLocalizations(local.item.numberopt.name)
-                .setDescription("number of selected item")
-                .setDescriptionLocalizations(local.item.numberopt.description)))
+                .setName(getMainTranslation("number"))
+                .setNameLocalizations(getAllTranslation("number"))
+                .setDescription(getMainTranslation("number_selected_item"))
+                .setDescriptionLocalizations(getAllTranslation("number_selected_item"))))
         .addSubcommand(c => c
-            .setName("file")
-            .setNameLocalizations(local.file.name)
-            .setDescription("upload a file")
-            .setDescriptionLocalizations(local.file.description)
+            .setName(getMainTranslation("file"))
+            .setNameLocalizations(getAllTranslation("file"))
+            .setDescription(getMainTranslation("upload_file"))
+            .setDescriptionLocalizations(getAllTranslation("upload_file"))
             .addAttachmentOption(o => o
-                .setName("file")
-                .setNameLocalizations(local.file.fileopt.name)
-                .setDescription("the file to upload")
-                .setDescriptionLocalizations(local.file.fileopt.description)
+                .setName(getMainTranslation("file"))
+                .setNameLocalizations(getAllTranslation("file"))
+                .setDescription(getMainTranslation("file_to_upload"))
+                .setDescriptionLocalizations(getAllTranslation("file_to_upload"))
                 .setRequired(true))),
     async execute(interaction = CommandInteraction.prototype) {
         switch (interaction.options.getSubcommand()) {
@@ -44,7 +44,7 @@ module.exports = {
                 const id = interaction.options.getString("itemid")
                 const number = interaction.options.getNumber("number") || 1
                 if (!interaction.client.select.get(interaction.user.id)) {
-                    interaction.reply({ embeds: [embedError("missing bot interaction")], ephemeral: true })
+                    interaction.reply({ embeds: [embedError(getTranslation("missing_interaction", interaction.locale))], ephemeral: true })
                 } else {
                     interaction.client.select.get(interaction.user.id)?.("item", id, number)
                     const item = await Item.getItemById(interaction.guildId, id)
@@ -56,13 +56,13 @@ module.exports = {
                 const file = interaction.options.getAttachment("file")
                 const split = file.name.split(".")
                 if (!extension.includes(split[split.length - 1])) {
-                    interaction.reply({ embeds: [embedError("bad file format")], ephemeral: true })
+                    interaction.reply({ embeds: [embedError(getTranslation("bad_format", interaction.locale))], ephemeral: true })
                     return
                 }
                 if (!interaction.client.select.get(interaction.user.id)) {
-                    interaction.reply({ embeds: [embedError("missing bot interaction")], ephemeral: true })
+                    interaction.reply({ embeds: [embedError(getTranslation("missing_interaction", interaction.locale))], ephemeral: true })
                 } else {
-                    interaction.reply({ embeds: [embedFastMessage(`file : ${file.name}`)], ephemeral: true })
+                    interaction.reply({ embeds: [embedFastMessage(`${getTranslation("file")} : ${file.name}`)], ephemeral: true })
                     const { data } = await axios.get(file.url)
                     interaction.client.select.get(interaction.user.id)?.("file", file.name, data)
                 }

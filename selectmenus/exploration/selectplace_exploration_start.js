@@ -2,8 +2,7 @@ const { StringSelectMenuBuilder, BaseInteraction, StringSelectMenuInteraction, S
 const { Place } = require("../../bin/exploration");
 const { timeMessage, embedError } = require("../../bin/fastconst");
 const { paramCustomId } = require("../../bin/utility");
-const local = require("../../local.json").commands.exploration
-const otherlocal = require("../../local.json").other
+const { getTranslation } = require("../../bin/translation");
 
 module.exports = {
     id: "selectplace_exploration_start",
@@ -23,15 +22,15 @@ module.exports = {
     async execute(interaction = StringSelectMenuInteraction.prototype) {
         const parm = paramCustomId(interaction.customId)
         if (parm.userid != interaction.user.id) {
-            interaction.reply({ ephemeral: true, embeds: [embedError(otherlocal.ownermessage[interaction.locale] || "You are not my owner.", interaction.locale)] })
+            interaction.reply({ ephemeral: true, embeds: [embedError(getTranslation("owner_error", interaction.locale), interaction.locale)] })
             return
         }
         const value = interaction.values[0]
         const place = await Place.getPlaceById(interaction.guildId, value)
         const embed = new EmbedBuilder()
             .setColor(0x00cc66)
-            .setTitle(local.name[interaction] || "exploration")
-            .setDescription(local.start.reply[interaction] || "exploration success")
+            .setTitle(getTranslation("exploration", interaction.locale))
+            .setDescription(getTranslation("exploration_success", interaction.locale))
             .addFields([{ name: `${place.icon} ${place.name}`, value: place.id }])
         interaction.message.edit({ ephemeral: true, embeds: [embed], components: [] })
     }

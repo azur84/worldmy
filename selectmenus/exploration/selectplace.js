@@ -2,8 +2,7 @@ const { StringSelectMenuBuilder, BaseInteraction, StringSelectMenuInteraction, S
 const { Place } = require("../../bin/exploration");
 const { timeMessage, embedError } = require("../../bin/fastconst");
 const { paramCustomId } = require("../../bin/utility");
-const local = require("../../local.json").selectmenus.selectplace
-const otherlocal = require("../../local.json").other
+const { getTranslation } = require("../../bin/translation");
 
 module.exports = {
     id: "selectplace",
@@ -27,7 +26,7 @@ module.exports = {
     async execute(interaction = StringSelectMenuInteraction.prototype) {
         const parm = paramCustomId(interaction.customId)
         if (parm.userid != interaction.user.id) {
-            interaction.reply({ ephemeral: true, embeds: [embedError(otherlocal.ownermessage[interaction.locale] || "You are not my owner.", interaction.locale)] })
+            interaction.reply({ ephemeral: true, embeds: [embedError(getTranslation("owner_error", interaction.locale), interaction.locale)] })
             return
         }
         switch (interaction.values[0]) {
@@ -42,14 +41,14 @@ module.exports = {
                 const place = await Place.getPlaceById(interaction.guildId, interaction.values[0])
                 const embed = new EmbedBuilder()
                     .setColor(0x00B300)
-                    .setTitle(local.reply.name[interaction.locale] || "exploration")
+                    .setTitle(getTranslation("exploration",interaction.locale))
                     .setDescription(place.name)
                     .addFields([
                         {
-                            name: 'Id :', value: place.id
+                            name: `${getTranslation("id")} :`, value: place.id
                         },
                         {
-                            name: "Icon :", value: place.icon
+                            name:`${getTranslation("icon")} :`, value: place.icon
                         }
                     ])
                 const load = await timeMessage(interaction, "loading")
