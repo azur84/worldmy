@@ -1,9 +1,14 @@
-const { SlashCommandBuilder, CommandInteraction, EmbedBuilder, ActionRowBuilder, AutocompleteInteraction } = require("discord.js");
-const { timeout, deleteData } = require("../../bin/data");
+const { SlashCommandBuilder, CommandInteraction, EmbedBuilder, ActionRowBuilder, AutocompleteInteraction, MessageReaction } = require("discord.js");
+const { timeout, deleteData, writeData, getData } = require("../../bin/data");
 const { Place } = require("../../bin/exploration");
 const { embedError } = require("../../bin/fastconst");
 const { Building } = require("../../bin/building");
 const { getTranslation, getMainTranslation, getAllTranslation } = require("../../bin/translation");
+const area_colors = {
+    residential_area: 0xf300ff,
+    productive_area: 0xffc000,
+    tertiary_area: 0x2986cc
+}
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -30,17 +35,17 @@ module.exports = {
                     .setChoices(
                         {
                             name: getMainTranslation("residential_area"),
-                            value: "residential",
+                            value: "residential_area",
                             name_localizations: getAllTranslation("residential_area")
                         },
                         {
                             name: getMainTranslation("productive_area"),
-                            value: "productive",
+                            value: "productive_area",
                             name_localizations: getAllTranslation("productive_area")
                         },
                         {
                             name: getMainTranslation("tertiary_area"),
-                            value: "tertiary",
+                            value: "tertiary_area",
                             name_localizations: getAllTranslation("tertiary_area")
                         }
                     )
@@ -50,7 +55,44 @@ module.exports = {
                     .setNameLocalizations(getAllTranslation("number"))
                     .setDescription(getMainTranslation("number_area"))
                     .setDescriptionLocalizations(getAllTranslation("number_area"))
-                    .setMinValue(1))))
+                    .setMinValue(1))
+            )
+            .addSubcommand(c => c
+                .setName(getMainTranslation("remove"))
+                .setNameLocalizations(getAllTranslation("remove"))
+                .setDescription(getMainTranslation("remove_area"))
+                .setDescriptionLocalizations(getAllTranslation("remove_area"))
+                .addStringOption(o => o
+                    .setName(getMainTranslation("type"))
+                    .setNameLocalizations(getAllTranslation("type"))
+                    .setDescription(getMainTranslation("type_area"))
+                    .setDescriptionLocalizations(getAllTranslation("type_area"))
+                    .setRequired(true)
+                    .setChoices(
+                        {
+                            name: getMainTranslation("residential_area"),
+                            value: "residential_area",
+                            name_localizations: getAllTranslation("residential_area")
+                        },
+                        {
+                            name: getMainTranslation("productive_area"),
+                            value: "productive_area",
+                            name_localizations: getAllTranslation("productive_area")
+                        },
+                        {
+                            name: getMainTranslation("tertiary_area"),
+                            value: "tertiary_area",
+                            name_localizations: getAllTranslation("tertiary_area")
+                        }
+                    )
+                )
+                .addIntegerOption(o => o
+                    .setName(getMainTranslation("number"))
+                    .setNameLocalizations(getAllTranslation("number"))
+                    .setDescription(getMainTranslation("number_area"))
+                    .setDescriptionLocalizations(getAllTranslation("number_area"))
+                    .setMinValue(1)
+                )))
         .addSubcommand(c => c
             .setName(getMainTranslation("build"))
             .setDescriptionLocalizations(getAllTranslation("build"))
@@ -65,6 +107,28 @@ module.exports = {
                 .setRequired(true))),
     async execute(interaction = CommandInteraction.prototype) {
         switch (interaction.options.getSubcommandGroup()) {
+            case "area":
+                const area_type = interaction.options.getString("type")
+                const city = await getData(interaction.guildId, "city", interaction.user.id) || {}
+                const number = interaction.options.getInteger("number") || 5
+                if (!city.area) city.area = {}
+                if (!city.area[area_type]) city.area[area_type] = 0
+                if (interaction.options.getSubcommand() == "create") {
+                    city.area[area_type] = city.area[area_type] + number
+                } else {
+                    city.area[area_type] = city.area[area_type] - number
+                }
+                await writeData(interaction.guildId, "city", interaction.user.id, city, false)
+                const embed = new EmbedBuilder()
+                    .setTitle(getTranslation("area", interaction.locale))
+                    .setDescription(getTranslation(area_type, interaction.locale))
+                    .setColor(area_colors[area_type])
+                    .addFields([
+                        { name: `${getTranslation("number")} :`, value: `${number}`, inline: true },
+                        { name: `${getTranslation("total")} :`, value: `${city.area[area_type]}`, inline: true }
+                    ])
+                await interaction.reply({ ephemeral: true, embeds: [embed] })
+                break
             default:
                 switch (interaction.options.getSubcommand()) {
                     case "build":

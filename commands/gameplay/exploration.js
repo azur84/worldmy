@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, CommandInteraction, EmbedBuilder, ActionRowBuilder } = require("discord.js");
-const { timeout, deleteData } = require("../../bin/data");
+const { deleteData, getDataTimeout, setDataTimeout } = require("../../bin/data");
 const { Place } = require("../../bin/exploration");
 const { embedError } = require("../../bin/fastconst");
 const { getMainTranslation, getAllTranslation, getTranslation } = require("../../bin/translation");
@@ -20,7 +20,7 @@ module.exports = {
             default:
                 switch (interaction.options.getSubcommand()) {
                     case "start":
-                        const timeo = await timeout(interaction.guildId, "exploration", interaction.user.id, 7200)
+                        const timeo = await getDataTimeout(interaction.guildId, "exploration", interaction.user.id)
                         if (timeo) {
                             const embed = new EmbedBuilder()
                                 .setColor(0x006699)
@@ -36,15 +36,15 @@ module.exports = {
                             const places = await Place.getGuildsPlaces(interaction.guildId)
                             switch (places.length) {
                                 case 0:
-                                    interaction.reply({ ephemeral: true, embeds: [embedError(getTranslation("exploration_disabled", interaction.locale))] })
-                                    await deleteData(interaction.guildId, "exploration", interaction.user.id, false)
+                                    await interaction.reply({ ephemeral: true, embeds: [embedError(getTranslation("exploration_disabled", interaction.locale))] })
                                     break
                                 case 1:
                                     const embed = new EmbedBuilder()
                                         .setColor(0x00cc66)
                                         .setTitle(getTranslation("exploration", interaction.locale))
                                         .setDescription(getTranslation("exploration_success", interaction.locale))
-                                    interaction.reply({ ephemeral: true, embeds: [embed] })
+                                    await interaction.reply({ ephemeral: true, embeds: [embed] })
+                                    await setDataTimeout(interaction.guildId, "exploration", interaction.user.id,7200)
                                     break
                                 default:
                                     const embedselect = new EmbedBuilder()
@@ -54,7 +54,7 @@ module.exports = {
                                     const menu = interaction.client.selectmenus.get("selectplace_exploration_start").data(interaction, places, interaction.user.id)
                                     const row = new ActionRowBuilder()
                                         .addComponents(menu)
-                                    interaction.reply({ ephemeral: true, embeds: [embedselect], components: [row] })
+                                    interaction.reply({ embeds: [embedselect], components: [row] })
                                     break
                             }
 

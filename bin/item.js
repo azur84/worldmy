@@ -1,7 +1,7 @@
 const { writeData, getDataList, getData, deleteData } = require('./data')
 
 class ItemBuilder {
-    constructor(guildid,id) {
+    constructor(guildid, id) {
         this.data.guildid = guildid
         this.data.id = id
     }
@@ -9,7 +9,8 @@ class ItemBuilder {
         name: "",
         id: "",
         icon: "",
-        guildid: ""
+        guildid: "",
+        producible: false
     }
 
     setIcon(icon) {
@@ -18,6 +19,10 @@ class ItemBuilder {
     }
     setName(name) {
         this.data.name = name
+        return this
+    }
+    setProducible(value) {
+        this.data.producible = value
         return this
     }
 
@@ -33,6 +38,7 @@ class Item {
     id = ""
     name = ""
     icon = ""
+    producible = false
     static Builder = ItemBuilder
 
     async save() {
@@ -44,7 +50,8 @@ class Item {
             guildid: this.guildid,
             id: this.id,
             name: this.name,
-            icon: this.icon
+            icon: this.icon,
+            producible: this.producible
         }
     }
 
@@ -66,6 +73,7 @@ class Item {
         item.icon = data.icon
         item.id = data.id
         item.name = data.name
+        item.producible = data.producible
         return item
     }
     static async delete(guildid, id) {

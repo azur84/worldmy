@@ -17,19 +17,18 @@ async function getData(guildId, type, id) {
     const data = await Data.get(`${type}:${id}`)
     return data
 }
-async function timeout(guildId, id, userId, timeoutsec) {
+async function getDataTimeout(guildId, id, userId) {
     Data.opts.namespace = guildId
     const data = await Data.get(`${id}:${userId}`)
-    if (data) {
-        return data
-    } else {
-        if (!timeoutsec) return false
-        const t = new Date().getTime()
-        const tsec = (t / 1000)
-        const tsecar = (tsec + (timeoutsec)).toFixed(0)
-        await Data.set(`${id}:${userId}`, tsecar, timeoutsec * 1000)
-        return false
-    }
+    return data
+}
+async function setDataTimeout(guildId, id, userId, timeoutsec) {
+    Data.opts.namespace = guildId
+    const t = new Date().getTime()
+    const tsec = (t / 1000)
+    const tsecar = (tsec + (timeoutsec)).toFixed(0)
+    await Data.set(`${id}:${userId}`, tsecar, timeoutsec * 1000)
+    false
 }
 async function deleteData(guildId, type, id, withlist = true) {
     Data.opts.namespace = guildId
@@ -57,5 +56,6 @@ module.exports = {
     getData,
     deleteData,
     getDataList,
-    timeout
+    getDataTimeout,
+    setDataTimeout
 }

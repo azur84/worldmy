@@ -52,6 +52,7 @@
     "area_commands": "",
     "create": "",
     "create_area": "",
+    "remove_area": "",
     "type": "",
     "type_area": "",
     "residential_area": "",
@@ -81,5 +82,7 @@
     "file_to_upload": "",
     "add_item": "",
     "owner_error": "",
-    "cancel": ""
+    "cancel": "",
+    "total": "",
+    "producible": ""
 }

@@ -57,7 +57,7 @@ module.exports = {
                 .setName(getMainTranslation("group"))
                 .setNameLocalizations(getAllTranslation("group"))
                 .setDescription(getMainTranslation("group_channel_description"))
-                .setDescriptionLocalizations(getMainTranslation("group_channel_description"))
+                .setDescriptionLocalizations(getAllTranslation("group_channel_description"))
                 .addChannelOption(C => C
                     .setName(getMainTranslation("channel-group"))
                     .setNameLocalizations(getAllTranslation("channel-group"))
@@ -90,12 +90,18 @@ module.exports = {
                     .setName(getMainTranslation("icon"))
                     .setNameLocalizations(getAllTranslation("icon"))
                     .setDescription(getMainTranslation("opt_item.icon"))
-                    .setDescriptionLocalizations(getAllTranslation("opt_item.icon"))))
+                    .setDescriptionLocalizations(getAllTranslation("opt_item.icon")))
+                .addBooleanOption(o => o
+                    .setName(getMainTranslation("producible"))
+                    .setNameLocalizations(getAllTranslation("producible"))
+                    .setDescription(getMainTranslation("producible_description"))
+                    .setDescriptionLocalizations("producible_description")
+                    .setRequired(false)))
             .addSubcommand(C => C
                 .setName(getMainTranslation("remove"))
-                .setNameLocalizations(getMainTranslation("remove"))
+                .setNameLocalizations(getAllTranslation("remove"))
                 .setDescription(getMainTranslation("remove_item"))
-                .setNameLocalizations(getAllTranslation("remove_item"))
+                .setDescriptionLocalizations(getAllTranslation("remove_item"))
                 .addStringOption(C => C
                     .setName(getMainTranslation("item_id"))
                     .setNameLocalizations(getAllTranslation("item_id"))
@@ -131,6 +137,11 @@ module.exports = {
                             name: getMainTranslation("choices.icon"),
                             value: "icon",
                             name_localizations: getAllTranslation("choices.icon")
+                        },
+                        {
+                            name: getMainTranslation("choices.producible"),
+                            value: "producible",
+                            name_localizations: getAllTranslation("choices.producible")
                         }
                     )
                 )
@@ -148,10 +159,12 @@ module.exports = {
                         const id = interaction.options.getString("id")
                         const name = interaction.options.getString("name") || id
                         const icon = interaction.options.getString("icon") || "📦"
+                        const producible = interaction.options.getBoolean("producible") || false
                         try {
                             new Item.Builder(interaction.guildId, id)
                                 .setIcon(icon)
                                 .setName(name)
+                                .setProducible(producible)
                                 .create()
                             const embed = new EmbedBuilder()
                                 .setColor(0x00B300)
@@ -170,6 +183,11 @@ module.exports = {
                                     {
                                         name: getTranslation("icon", interaction.locale),
                                         value: icon,
+                                        inline: true
+                                    },
+                                    {
+                                        name: getTranslation("producible", interaction.locale),
+                                        value: producible,
                                         inline: true
                                     }
                                 )

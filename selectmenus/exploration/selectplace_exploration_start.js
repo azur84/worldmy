@@ -3,6 +3,7 @@ const { Place } = require("../../bin/exploration");
 const { timeMessage, embedError } = require("../../bin/fastconst");
 const { paramCustomId } = require("../../bin/utility");
 const { getTranslation } = require("../../bin/translation");
+const { setDataTimeout } = require("../../bin/data");
 
 module.exports = {
     id: "selectplace_exploration_start",
@@ -31,7 +32,8 @@ module.exports = {
             .setColor(0x00cc66)
             .setTitle(getTranslation("exploration", interaction.locale))
             .setDescription(getTranslation("exploration_success", interaction.locale))
-            .addFields([{ name: `${place.icon} ${place.name}`, value: place.id }])
-        interaction.message.edit({ ephemeral: true, embeds: [embed], components: [] })
+            .addFields([{ name: `${place.icon} ${place.name}`, value: `${getTranslation("id", interaction.locale)} : ${place.id}` }])
+        await interaction.message.edit({ ephemeral: true, embeds: [embed], components: [] })
+        await setDataTimeout(interaction.guildId, "exploration", interaction.user.id, 7200)
     }
 }
