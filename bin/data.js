@@ -1,61 +1,108 @@
-const Keyv = require("keyv");
+const { Sequelize, DataTypes } = require("sequelize");
 require("dotenv").config()
 
-const Data = new Keyv(process.env.DataBaseURI)
-Data.on('error', err => console.error(`Connection Error ${err}`));
+const sequelize = new Sequelize(process.env.DataBaseURI)
 
-async function writeData(guildId, type, id, value, withlist = true) {
-    Data.opts.namespace = guildId
-    await Data.set(`${type}:${id}`, value)
-    if (!withlist) return
-    const keys = await Data.get(type) || []
-    if (!keys.includes(id)) keys.push(id)
-    await Data.set(type, keys)
+async function auth() {
+    try {
+        await sequelize.authenticate();
+        console.log('Connection has been established successfully.');
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
+    }
+
 }
-async function getData(guildId, type, id) {
-    Data.opts.namespace = guildId
-    const data = await Data.get(`${type}:${id}`)
-    return data
-}
-async function getDataTimeout(guildId, id, userId) {
-    Data.opts.namespace = guildId
-    const data = await Data.get(`${id}:${userId}`)
-    return data
-}
-async function setDataTimeout(guildId, id, userId, timeoutsec) {
-    Data.opts.namespace = guildId
-    const t = new Date().getTime()
-    const tsec = (t / 1000)
-    const tsecar = (tsec + (timeoutsec)).toFixed(0)
-    await Data.set(`${id}:${userId}`, tsecar, timeoutsec * 1000)
-    false
-}
-async function deleteData(guildId, type, id, withlist = true) {
-    Data.opts.namespace = guildId
-    await Data.delete(`${type}:${id}`)
-    if (!withlist) return
-    const keys = await Data.get(type) || []
-    const keyindex = keys.findIndex((element) => element == id)
-    keys.splice(keyindex, 1)
-    await Data.set(type, keys)
-}
-async function getDataList(guildId, type) {
-    Data.opts.namespace = guildId
-    const keys = await Data.get(type)
-    if (!keys) return []
-    const datas = keys.map((e) => {
-        return new Promise(async (resolve, reject) => {
-            const data = await Data.get(`${type}:${e}`)
-            resolve(data)
-        })
-    })
-    return await Promise.all(datas)
-}
+auth()
+
+const Place = sequelize.define(
+    "Place",
+    {
+        guildid: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        id: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        name: {
+            type: DataTypes.STRING
+        },
+        icon: {
+            type: DataTypes.STRING
+        }
+    }
+)
+
+const PlaceItemEntry = sequelize.define(
+    "PlaceItemEntry",
+    {
+        guildid: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        placeid: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        itemid: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        quantity: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0
+        },
+        pourcentage: {
+            type: DataTypes.NUMBER,
+            defaultValue: 100
+        }
+    }
+)
+
+const InventoryEntry = sequelize.define(
+    "InventoryEntry",
+    {
+        guildid: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        userid: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        itemid: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        quantity: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0
+        },
+    }
+)
+const BuildingArea = sequelize.define(
+    "BuildingArea",
+    {
+        guildid: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        userid: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        type:{
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        quantity:{
+            type: DataTypes.INTEGER,
+            defaultValue:0
+        }
+    }
+)
+
 module.exports = {
-    writeData,
-    getData,
-    deleteData,
-    getDataList,
-    getDataTimeout,
-    setDataTimeout
+    sequelize
 }

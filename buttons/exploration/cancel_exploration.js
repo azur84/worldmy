@@ -1,6 +1,7 @@
 const { ButtonBuilder, ButtonInteraction, ButtonStyle, EmbedBuilder, ActionRowBuilder } = require("discord.js");
-const { timeMessage } = require("../../bin/fastconst");
+const { embedError } = require("../../bin/fastconst");
 const { getTranslation } = require("../../bin/translation");
+const { paramCustomId } = require("../../bin/utility");
 
 module.exports = {
     id: "cancel_exploration",
@@ -10,6 +11,7 @@ module.exports = {
         .setEmoji("✖️")
         .setLabel(getTranslation("cancel", interaction.locale)),
     async execute(interaction = ButtonInteraction.prototype) {
+        await interaction.deferUpdate()
         const parm = paramCustomId(interaction.customId)
         if (parm.userid != interaction.user.id) {
             interaction.reply({ ephemeral: true, embeds: [embedError(getTranslation("owner_error", interaction.locale), interaction.locale)] })
@@ -22,8 +24,6 @@ module.exports = {
             .setColor(0x00B300)
             .setTitle(getTranslation("exploration", interaction.locale))
             .setDescription(getTranslation("exploration_menu_reply", interaction.locale))
-        const load = await timeMessage(interaction, "loading")
         await interaction.message.edit({ components: [row], embeds: [embed] })
-        await load()
     }
 }

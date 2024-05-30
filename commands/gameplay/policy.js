@@ -7,71 +7,81 @@ const { getTranslation, getMainTranslation, getAllTranslation } = require("../..
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName(getMainTranslation("policy"))
-        .setNameLocalizations(getAllTranslation("policy"))
+        .setName(getMainTranslation("policy", true))
+        .setNameLocalizations(getAllTranslation("policy", true))
         .setDescription(getMainTranslation("policy_description"))
         .setDescriptionLocalizations(getAllTranslation("policy_description"))
         .addSubcommandGroup(g => g
-            .setName(getMainTranslation("taxe"))
-            .setNameLocalizations(getAllTranslation("taxe"))
+            .setName(getMainTranslation("taxes", true))
+            .setNameLocalizations(getAllTranslation("taxes", true))
             .setDescription(getMainTranslation("defining_taxes"))
             .setDescriptionLocalizations(getAllTranslation("defining_taxes"))
             .addSubcommand(c => c
-                .setName(getMainTranslation("housing"))
-                .setNameLocalizations(getAllTranslation("housing"))
-                .setDescription(getMainTranslation("define_taxes.housing"))
-                .setDescriptionLocalizations(getAllTranslation("define_taxes.housing"))
+                .setName(getMainTranslation("civil", true))
+                .setNameLocalizations(getAllTranslation("civil", true))
+                .setDescription(getMainTranslation("define_taxes.civil"))
+                .setDescriptionLocalizations(getAllTranslation("define_taxes.civil"))
                 .addNumberOption(o => o
-                    .setName(getMainTranslation("value"))
-                    .setNameLocalizations(getAllTranslation("value"))
-                    .setDescription(getMainTranslation("taxes_description.housing"))
-                    .setDescriptionLocalizations(getAllTranslation("taxes_description.housing"))
+                    .setName(getMainTranslation("value", true))
+                    .setNameLocalizations(getAllTranslation("value", true))
+                    .setDescription(getMainTranslation("taxes_description.civil"))
+                    .setDescriptionLocalizations(getAllTranslation("taxes_description.civil"))
                     .setMaxValue(100)
-                    .setMinValue(0)))
+                    .setMinValue(0)
+                    .setRequired(true)))
             .addSubcommand(c => c
-                .setName(getMainTranslation("production"))
-                .setNameLocalizations(getAllTranslation("production"))
+                .setName(getMainTranslation("production", true))
+                .setNameLocalizations(getAllTranslation("production", true))
                 .setDescription(getMainTranslation("define_taxes.production"))
                 .setDescriptionLocalizations(getAllTranslation("define_taxes.production"))
                 .addNumberOption(o => o
-                    .setName(getMainTranslation("value"))
-                    .setNameLocalizations(getAllTranslation("value"))
+                    .setName(getMainTranslation("value", true))
+                    .setNameLocalizations(getAllTranslation("value", true))
                     .setDescription(getMainTranslation("taxes_description.production"))
                     .setDescriptionLocalizations(getAllTranslation("taxes_description.production"))
                     .setMaxValue(100)
-                    .setMinValue(0)))
+                    .setMinValue(0)
+                    .setRequired(true)))
             .addSubcommand(c => c
-                .setName(getMainTranslation("vat"))
-                .setNameLocalizations(getAllTranslation("vat"))
+                .setName(getMainTranslation("vat", true))
+                .setNameLocalizations(getAllTranslation("vat", true))
                 .setDescription(getMainTranslation("define_taxes.vat"))
                 .setDescriptionLocalizations(getAllTranslation("define_taxes.vat"))
                 .addNumberOption(o => o
-                    .setName(getMainTranslation("value"))
-                    .setNameLocalizations(getAllTranslation("value"))
+                    .setName(getMainTranslation("value", true))
+                    .setNameLocalizations(getAllTranslation("value", true))
                     .setDescription(getMainTranslation("taxes_description.vat"))
                     .setDescriptionLocalizations(getAllTranslation("taxes_description.vat"))
                     .setMaxValue(100)
-                    .setMinValue(0))))
+                    .setMinValue(0)
+                    .setRequired(true))))
         .addSubcommand(c => c
-            .setName(getMainTranslation("menu"))
-            .setNameLocalizations(getAllTranslation("menu"))
+            .setName(getMainTranslation("menu", true))
+            .setNameLocalizations(getAllTranslation("menu", true))
             .setDescription(getMainTranslation("policy_menu_description"))
             .setDescriptionLocalizations(getAllTranslation("policy_menu_description"))),
     async execute(interaction = CommandInteraction.prototype) {
         switch (interaction.options.getSubcommandGroup()) {
-            case "taxe":
+            case getMainTranslation("taxe"):
+                const city = await getData(interaction.guildId, "city", interaction.user.id) || {}
+                const value = interaction.options.getNumber("value")
+                if (!city.taxe) city.taxe = {}
                 switch (interaction.options.getSubcommand()) {
-                    case "menu":
-                        
+                    case getMainTranslation("civil"):
+                        city.taxe.civil = value
                         break
-                    default:
+                    case getMainTranslation("vat"):
+                        city.taxe.vat = value
+                        break
+                    case getMainTranslation("production"):
+                        city.taxe.production = value
                         break
                 }
                 break
             default:
                 switch (interaction.options.getSubcommand()) {
                     case getMainTranslation("menu"):
-                        
+
                         break
                     default:
                         break
@@ -79,7 +89,7 @@ module.exports = {
                 break;
         }
         const city = await getData(interaction.guildId, "city", interaction.user.id) || {}
-        
+
     },
     async autocomplete(interaction = AutocompleteInteraction.prototype) {
         switch (interaction.options.getFocused(true).name) {

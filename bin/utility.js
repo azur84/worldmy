@@ -15,8 +15,55 @@ function paramCustomId(custom_id) {
     })
     return parm
 }
+function inPrimaryFactors(nombre) {
+    let facteurs = [];
+    let diviseur = 2;
+
+    while (diviseur * diviseur <= nombre) {
+        while (nombre % diviseur === 0) {
+            facteurs.push(diviseur);
+            nombre /= diviseur;
+        }
+        diviseur += 2;
+    }
+
+    if (nombre > 2) {
+        facteurs.push(nombre);
+    }
+
+    return facteurs;
+}
+function findCommonDivisors(nombre1, nombre2) {
+    let diviseursCommuns = [];
+  
+    while (nombre2 !== 0) {
+      const temp = nombre2;
+      nombre2 = nombre1 % nombre2;
+      nombre1 = temp;
+    }
+  
+    diviseursCommuns.push(nombre1);
+    let pgcd = nombre1;
+    let i = 2;
+    while (i * i <= pgcd) {
+      while (pgcd % i === 0) {
+        diviseursCommuns.push(i);
+        pgcd /= i;
+      }
+      i += 2;
+    }
+  
+    if (pgcd > 1) {
+      diviseursCommuns.push(pgcd);
+    }
+  
+    return diviseursCommuns;
+  }
+  
 
 module.exports = {
     timer,
-    paramCustomId
+    paramCustomId,
+    inPrimaryFactors,
+    findCommonDivisors
 }

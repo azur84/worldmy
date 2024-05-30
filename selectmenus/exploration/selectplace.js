@@ -1,6 +1,6 @@
 const { StringSelectMenuBuilder, BaseInteraction, StringSelectMenuInteraction, StringSelectMenuOptionBuilder, EmbedBuilder, ActionRowBuilder } = require("discord.js");
 const { Place } = require("../../bin/exploration");
-const { timeMessage, embedError } = require("../../bin/fastconst");
+const { embedError } = require("../../bin/fastconst");
 const { paramCustomId } = require("../../bin/utility");
 const { getTranslation } = require("../../bin/translation");
 
@@ -24,6 +24,7 @@ module.exports = {
             .addOptions(options)
     },
     async execute(interaction = StringSelectMenuInteraction.prototype) {
+        await interaction.deferUpdate()
         const parm = paramCustomId(interaction.customId)
         if (parm.userid != interaction.user.id) {
             interaction.reply({ ephemeral: true, embeds: [embedError(getTranslation("owner_error", interaction.locale), interaction.locale)] })
@@ -34,26 +35,28 @@ module.exports = {
                 await interaction.message.delete()
                 break;
             default:
+                const placeid = interaction.values[0]
                 const item = interaction.client.buttons.get("addexplorationitem").data(interaction, interaction.values[0], parm.userid)
                 const cancel = interaction.client.buttons.get("cancel_exploration").data(interaction, parm.userid)
+                const remove = interaction.client.buttons.get("remove_place").data(interaction, parm.userid, placeid)
                 const row = new ActionRowBuilder()
-                    .addComponents(item, cancel)
-                const place = await Place.getPlaceById(interaction.guildId, interaction.values[0])
+                    .addComponents(item, remove)
+                const row2 = new ActionRowBuilder()
+                    .addComponents(cancel)
+                const place = await Place.getPlaceById(interaction.guildId, placeid)
                 const embed = new EmbedBuilder()
                     .setColor(0x00B300)
-                    .setTitle(getTranslation("exploration",interaction.locale))
+                    .setTitle(getTranslation("exploration", interaction.locale))
                     .setDescription(place.name)
                     .addFields([
                         {
-                            name: `${getTranslation("id")} :`, value: place.id
+                            name: `${getTranslation("id", interaction.locale)} :`, value: place.id
                         },
                         {
-                            name:`${getTranslation("icon")} :`, value: place.icon
+                            name: `${getTranslation("icon", interaction.locale)} :`, value: place.icon
                         }
                     ])
-                const load = await timeMessage(interaction, "loading")
-                await interaction.message.edit({ components: [row], embeds: [embed] })
-                await load()
+                await interaction.message.edit({ components: [row,row2], embeds: [embed] })
                 break;
         }
     },

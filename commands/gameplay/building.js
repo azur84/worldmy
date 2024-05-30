@@ -12,23 +12,23 @@ const area_colors = {
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName(getMainTranslation("building"))
-        .setNameLocalizations(getAllTranslation("building"))
+        .setName(getMainTranslation("building", true))
+        .setNameLocalizations(getAllTranslation("building",true))
         .setDescription(getMainTranslation("building_commands"))
         .setDescriptionLocalizations(getAllTranslation("building_commands"))
         .addSubcommandGroup(g => g
-            .setName(getMainTranslation("area"))
-            .setNameLocalizations(getAllTranslation("area"))
+            .setName(getMainTranslation("area", true))
+            .setNameLocalizations(getAllTranslation("area",true))
             .setDescription(getMainTranslation("area_commands"))
             .setDescriptionLocalizations(getAllTranslation("area_commands"))
             .addSubcommand(c => c
-                .setName(getMainTranslation("create"))
-                .setNameLocalizations(getAllTranslation("create"))
+                .setName(getMainTranslation("create", true))
+                .setNameLocalizations(getAllTranslation("create",true))
                 .setDescription(getMainTranslation("create_area"))
                 .setDescriptionLocalizations(getAllTranslation("create_area"))
                 .addStringOption(o => o
-                    .setName(getMainTranslation("type"))
-                    .setNameLocalizations(getAllTranslation("type"))
+                    .setName(getMainTranslation("type", true))
+                    .setNameLocalizations(getAllTranslation("type",true))
                     .setDescription(getMainTranslation("type_area"))
                     .setDescriptionLocalizations(getAllTranslation("type_area"))
                     .setRequired(true)
@@ -51,20 +51,20 @@ module.exports = {
                     )
                 )
                 .addIntegerOption(o => o
-                    .setName(getMainTranslation("number"))
-                    .setNameLocalizations(getAllTranslation("number"))
+                    .setName(getMainTranslation("number", true))
+                    .setNameLocalizations(getAllTranslation("number",true))
                     .setDescription(getMainTranslation("number_area"))
                     .setDescriptionLocalizations(getAllTranslation("number_area"))
                     .setMinValue(1))
             )
             .addSubcommand(c => c
-                .setName(getMainTranslation("remove"))
-                .setNameLocalizations(getAllTranslation("remove"))
+                .setName(getMainTranslation("remove", true))
+                .setNameLocalizations(getAllTranslation("remove",true))
                 .setDescription(getMainTranslation("remove_area"))
                 .setDescriptionLocalizations(getAllTranslation("remove_area"))
                 .addStringOption(o => o
-                    .setName(getMainTranslation("type"))
-                    .setNameLocalizations(getAllTranslation("type"))
+                    .setName(getMainTranslation("type", true))
+                    .setNameLocalizations(getAllTranslation("type",true))
                     .setDescription(getMainTranslation("type_area"))
                     .setDescriptionLocalizations(getAllTranslation("type_area"))
                     .setRequired(true)
@@ -87,27 +87,27 @@ module.exports = {
                     )
                 )
                 .addIntegerOption(o => o
-                    .setName(getMainTranslation("number"))
-                    .setNameLocalizations(getAllTranslation("number"))
+                    .setName(getMainTranslation("number", true))
+                    .setNameLocalizations(getAllTranslation("number",true))
                     .setDescription(getMainTranslation("number_area"))
                     .setDescriptionLocalizations(getAllTranslation("number_area"))
                     .setMinValue(1)
                 )))
         .addSubcommand(c => c
-            .setName(getMainTranslation("build"))
-            .setDescriptionLocalizations(getAllTranslation("build"))
+            .setName(getMainTranslation("build", true))
+            .setDescriptionLocalizations(getAllTranslation("build",true))
             .setDescription(getMainTranslation("build_building"))
             .setDescriptionLocalizations(getAllTranslation("build_building"))
             .addStringOption(o => o
-                .setName(getMainTranslation("building"))
-                .setNameLocalizations(getAllTranslation("building"))
+                .setName(getMainTranslation("building", true))
+                .setNameLocalizations(getAllTranslation("building",true))
                 .setDescription(getMainTranslation("building_to_build"))
                 .setDescriptionLocalizations(getAllTranslation("building_to_build"))
                 .setAutocomplete(true)
                 .setRequired(true))),
     async execute(interaction = CommandInteraction.prototype) {
         switch (interaction.options.getSubcommandGroup()) {
-            case "area":
+            case getMainTranslation("area", true):
                 const area_type = interaction.options.getString("type")
                 const city = await getData(interaction.guildId, "city", interaction.user.id) || {}
                 const number = interaction.options.getInteger("number") || 5
@@ -131,7 +131,7 @@ module.exports = {
                 break
             default:
                 switch (interaction.options.getSubcommand()) {
-                    case "build":
+                    case getMainTranslation("build", true):
                         break;
                     default:
                         break;
@@ -141,7 +141,7 @@ module.exports = {
     },
     async autocomplete(interaction = AutocompleteInteraction.prototype) {
         switch (interaction.options.getFocused(true).name) {
-            case "building":
+            case getMainTranslation("building", true):
                 const focusedValue = interaction.options.getFocused();
                 const items = await Building.getGuildsBuildings(interaction.guildId)
                 const filter = items.filter(choice => {
@@ -154,7 +154,7 @@ module.exports = {
                 })
                 const filtered = filter.slice(0, 24)
                 await interaction.respond(
-                    filtered.map(choice => ({ name: `${choice.icon} ${choice.name}`, value: choice.id })),
+                    filtered.map(choice => ({ name: `${choice.name}`, value: choice.id })),
                 )
                 break;
             default:

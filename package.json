@@ -1,10 +1,9 @@
 {
   "dependencies": {
-    "@keyv/mongo": "^2.2.8",
     "axios": "^1.6.8",
     "discord.js": "^14.13.0",
     "dotenv": "^16.3.1",
-    "keyv": "^4.5.4"
+    "sequelize": "^6.37.3"
   },
   "name": "worldmy",
   "description": "a element empire simulation discord bot",

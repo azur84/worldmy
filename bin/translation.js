@@ -9,30 +9,32 @@ tranlationfiles.forEach((e) => {
     locals[localname] = file
 })
 
-function getTranslation(key, id, withoutmain = false) {
+function getTranslation(key, id, noUpper = false, withoutmain = false) {
     if (withoutmain) {
-        return getPropertyValue(locals?.[id], key)
+        const value = getPropertyValue(locals?.[id], key)
+        return noUpper ? value.toLowerCase() : value
     } else {
-        return getPropertyValue(locals?.[id], key) || getMainTranslation(key)
+        const value = (getPropertyValue(locals?.[id], key) || getMainTranslation(key))
+        return noUpper ? value.toLowerCase() : value
     }
 }
 
-function getMainTranslation(key) {
+function getMainTranslation(key, noUpper = false) {
     const str = getPropertyValue(locals?.["en_main"], key)
     if (!str) {
         console.error(`missing main key : ${key}`)
         debugger
     }
-    return str
+    return noUpper ? str.toLowerCase() : str
 }
 
-function getAllTranslation(tranlationkey) {
+function getAllTranslation(tranlationkey, noUpper = false) {
     let rep = {}
     for (const [key, value] of Object.entries(locals)) {
         if (key === "en_main") continue
-        const lo = getPropertyValue(value, tranlationkey)
+        const lo = getPropertyValue(value, tranlationkey, noUpper)
         if (!lo) continue
-        rep[key] = lo
+        rep[key] = noUpper ? lo.toLowerCase() : lo
     }
     return rep
 }

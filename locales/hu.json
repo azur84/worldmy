@@ -41,7 +41,8 @@
     "item_modification": "",
     "choices": {
         "name": "",
-        "icon": ""
+        "icon": "",
+        "producible": ""
     },
     "value": "",
     "new_item_value": "",
@@ -84,5 +85,37 @@
     "owner_error": "",
     "cancel": "",
     "total": "",
-    "producible": ""
+    "producible": "",
+    "producible_description": "",
+    "collect": "",
+    "collect_description": "",
+    "policy": "",
+    "policy_description": "",
+    "taxes": "",
+    "defining_taxes": "",
+    "civil": "",
+    "production": "",
+    "vat": "",
+    "taxes_type": {
+        "civil": "",
+        "production": "",
+        "vat": ""
+    },
+    "define_taxes": {
+        "civil": "",
+        "production": "",
+        "vat": ""
+    },
+    "taxes_description": {
+        "civil": "",
+        "production": "",
+        "vat": ""
+    },
+    "policy_menu_description": "",
+    "are_sure_delete": "",
+    "market": "",
+    "market_description": "",
+    "forum": "",
+    "market_forum_description": "",
+    "market_forum_option": ""
 }

@@ -1,6 +1,6 @@
 const { StringSelectMenuBuilder, BaseInteraction, StringSelectMenuInteraction, StringSelectMenuOptionBuilder, EmbedBuilder, ActionRowBuilder } = require("discord.js");
-const { Place } = require("../../bin/exploration");
-const { timeMessage, embedError } = require("../../bin/fastconst");
+const { Place, startExploration } = require("../../bin/exploration");
+const { embedError } = require("../../bin/fastconst");
 const { paramCustomId } = require("../../bin/utility");
 const { getTranslation } = require("../../bin/translation");
 const { setDataTimeout } = require("../../bin/data");
@@ -28,11 +28,13 @@ module.exports = {
         }
         const value = interaction.values[0]
         const place = await Place.getPlaceById(interaction.guildId, value)
+        const exploration = await startExploration(interaction, value)
         const embed = new EmbedBuilder()
             .setColor(0x00cc66)
             .setTitle(getTranslation("exploration", interaction.locale))
             .setDescription(getTranslation("exploration_success", interaction.locale))
-            .addFields([{ name: `${place.icon} ${place.name}`, value: `${getTranslation("id", interaction.locale)} : ${place.id}` }])
+            .addFields([{ name: `${place.icon} ${place.name}`, value: `\u200B` }])
+            .addFields(exploration)
         await interaction.message.edit({ ephemeral: true, embeds: [embed], components: [] })
         await setDataTimeout(interaction.guildId, "exploration", interaction.user.id, 7200)
     }

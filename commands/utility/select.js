@@ -6,52 +6,57 @@ const { getTranslation, getMainTranslation, getAllTranslation } = require("../..
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName(getMainTranslation("select"))
-        .setNameLocalizations(getAllTranslation("select"))
+        .setName(getMainTranslation("select", true))
+        .setNameLocalizations(getAllTranslation("select", true))
         .setDescription(getMainTranslation("select"))
         .setDescriptionLocalizations(getAllTranslation("select"))
         .addSubcommand(c => c
-            .setName(getMainTranslation("item"))
-            .setNameLocalizations(getAllTranslation("item"))
+            .setName(getMainTranslation("item", true))
+            .setNameLocalizations(getAllTranslation("item", true))
             .setDescription(getMainTranslation("select_item"))
             .setDescriptionLocalizations(getAllTranslation("select_item"))
             .addStringOption(o => o
-                .setName(getMainTranslation("item_id"))
-                .setNameLocalizations(getAllTranslation("item_id"))
+                .setName(getMainTranslation("item_id", true))
+                .setNameLocalizations(getAllTranslation("item_id", true))
                 .setDescription(getMainTranslation("selected_item"))
                 .setDescriptionLocalizations(getAllTranslation("selected_item"))
                 .setAutocomplete(true)
                 .setRequired(true))
             .addNumberOption(o => o
-                .setName(getMainTranslation("number"))
-                .setNameLocalizations(getAllTranslation("number"))
+                .setName(getMainTranslation("number", true))
+                .setNameLocalizations(getAllTranslation("number", true))
                 .setDescription(getMainTranslation("number_selected_item"))
                 .setDescriptionLocalizations(getAllTranslation("number_selected_item"))))
         .addSubcommand(c => c
-            .setName(getMainTranslation("file"))
-            .setNameLocalizations(getAllTranslation("file"))
+            .setName(getMainTranslation("file", true))
+            .setNameLocalizations(getAllTranslation("file", true))
             .setDescription(getMainTranslation("upload_file"))
             .setDescriptionLocalizations(getAllTranslation("upload_file"))
             .addAttachmentOption(o => o
-                .setName(getMainTranslation("file"))
-                .setNameLocalizations(getAllTranslation("file"))
+                .setName(getMainTranslation("file", true))
+                .setNameLocalizations(getAllTranslation("file", true))
                 .setDescription(getMainTranslation("file_to_upload"))
                 .setDescriptionLocalizations(getAllTranslation("file_to_upload"))
                 .setRequired(true))),
     async execute(interaction = CommandInteraction.prototype) {
         switch (interaction.options.getSubcommand()) {
-            case "item":
+            case getMainTranslation("item"):
                 const id = interaction.options.getString("itemid")
                 const number = interaction.options.getNumber("number") || 1
                 if (!interaction.client.select.get(interaction.user.id)) {
                     interaction.reply({ embeds: [embedError(getTranslation("missing_interaction", interaction.locale))], ephemeral: true })
                 } else {
                     interaction.client.select.get(interaction.user.id)?.("item", id, number)
-                    const item = await Item.getItemById(interaction.guildId, id)
+                    const item = await Item.findOne({
+                        where: {
+                            guildid: interaction.guildId,
+                            id: id,
+                        }
+                    })
                     interaction.reply({ embeds: [embedFastMessage(`${number} ${item.icon}${item.name}`)], ephemeral: true })
                 }
                 break;
-            case "file":
+            case getMainTranslation("file"):
                 const extension = ["json"]
                 const file = interaction.options.getAttachment("file")
                 const split = file.name.split(".")
@@ -73,9 +78,13 @@ module.exports = {
     },
     async autocomplete(interaction = AutocompleteInteraction.prototype) {
         switch (interaction.options.getFocused(true).name) {
-            case "itemid":
+            case getMainTranslation("item_id"):
                 const focusedValue = interaction.options.getFocused();
-                const items = await Item.getGuildsItems(interaction.guildId)
+                const items = await Item.findAll({
+                    where:{
+                        guildid:interaction.guildId
+                    }
+                })
                 const filter = items.filter(choice => {
                     if (choice.id.includes(focusedValue)) {
                         return true
@@ -86,7 +95,7 @@ module.exports = {
                 })
                 const filtered = filter.slice(0, 24)
                 await interaction.respond(
-                    filtered.map(choice => ({ name: `${choice.icon} ${choice.name}`, value: choice.id })),
+                    filtered.map(choice => ({ name: `${choice.name}`, value: choice.id })),
                 )
                 break;
             default:

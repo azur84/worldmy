@@ -1,4 +1,7 @@
+const { BaseInteraction, EmbedBuilder } = require('discord.js');
 const { writeData, getDataList, getData, deleteData } = require('./data');
+const { getTranslation } = require('./translation');
+const { Inventory } = require('./inventory');
 
 class PlaceBuilder {
     constructor(guildid, id) {
@@ -9,7 +12,8 @@ class PlaceBuilder {
         name: "",
         id: "",
         icon: "",
-        guildid: ""
+        guildid: "",
+        itemsobtainable: []
     }
 
     setIcon(icon) {
@@ -29,7 +33,7 @@ class PlaceBuilder {
 }
 
 class Place {
-    itemstable = {}
+    itemsobtainable = []
     guildid = ""
     id = ""
     name = ""
@@ -39,6 +43,16 @@ class Place {
     async save() {
         await writeData(this.guildid, "places", this.id, this)
     }
+    addObtainableItem(item, pourcentage, quantity) {
+        this.itemsobtainable.push({
+            item: item,
+            pourcentage: pourcentage,
+            quantity: quantity
+        })
+    }
+    removeObtainableItem(id) {
+        this.itemsobtainable.splice(id)
+    }
 
     toString() {
         return {
@@ -46,7 +60,7 @@ class Place {
             id: this.id,
             name: this.name,
             icon: this.icon,
-            itemstable: this.itemstable,
+            itemsobtainable: this.itemsobtainable,
         }
     }
 
@@ -68,6 +82,7 @@ class Place {
         place.icon = data.icon
         place.name = data.name
         place.guildid = data.guildid
+        place.itemsobtainable = data.itemsobtainable
         return place
     }
     static async delete(guildid, id) {
@@ -75,6 +90,31 @@ class Place {
     }
 }
 
+function randomPourcentage() {
+    return 100 * Math.random()
+}
+
+async function startExploration(interaction = BaseInteraction.prototype, id) {
+    const place = !id ? ((await Place.getGuildsPlaces(interaction.guildId))[0]) : await Place.getPlaceById(interaction.guildId, id)
+    const items = place.itemsobtainable
+    const inv = await Inventory.getInventoryById(interaction.guildId, interaction.user.id)
+    const field = []
+    items.forEach((e) => {
+        if (randomPourcentage() <= e.pourcentage) {
+            inv[e.item] = inv[e.item] + e.quantity
+            const inlin = field.length % 3 == 0
+            field.push({
+                name: e.item,
+                value: `${getTranslation("quantity", interaction.locale)} : ${e.quantity}`,
+                inline: !inlin
+            })
+        }
+    })
+    await inv.save()
+    return field
+}
+
 module.exports = {
-    Place
+    Place,
+    startExploration
 }
